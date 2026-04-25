@@ -121,7 +121,7 @@ export function ControlPanel({
       <header className="panel-hero">
         <div>
           <p className="eyebrow">Aotearoa utility map</p>
-          <h1>Got2go.co</h1>
+          <h1>Got2Go</h1>
           <p className="hero-copy">Find a public toilet quickly, then get moving.</p>
         </div>
         <div className="brand-mark" aria-hidden="true">
@@ -367,9 +367,20 @@ export function ControlPanel({
           </section>
         </div>
       ) : null}
+
+      <PanelFooter />
     </aside>
   )
 }
+
+const PanelFooter = memo(function PanelFooter() {
+  return (
+    <footer className="panel-footer" aria-label="Site footer">
+      <span className="footer-brand">Dream Creative</span>
+      <span>For Lucy | 2026</span>
+    </footer>
+  )
+})
 
 const TripReadiness = memo(function TripReadiness({ summary }: { summary: GamificationSummary }) {
   return (

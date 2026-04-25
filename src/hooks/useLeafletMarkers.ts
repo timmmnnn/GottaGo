@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import L, { type Map as LeafletMap, type Marker } from 'leaflet'
 import type { MapMarker, Toilet } from '../types'
 import { activeMarkerIcon, clusterIcon, markerIcon, rareNearestMarkerIcon } from '../mapIcons'
@@ -25,6 +25,37 @@ export function useLeafletMarkers({
   const hasSyncedInitialSelection = useRef(false)
   const [mapZoom, setMapZoom] = useState(5)
   const [mapBounds, setMapBounds] = useState<L.LatLngBounds | null>(null)
+
+  const mobileUsableViewportOffset = useCallback(() => {
+    if (!compactMarkers || typeof window === 'undefined') return 0
+
+    const readinessCard = document.querySelector<HTMLElement>('.trip-readiness')
+    const overlayBottom = readinessCard?.getBoundingClientRect().bottom ?? 0
+
+    return Math.max(0, overlayBottom / 2)
+  }, [compactMarkers])
+
+  const adjustCenterForUsableViewport = useCallback(
+    (location: [number, number], zoom: number) => {
+      if (!map.current) return location
+
+      const offset = mobileUsableViewportOffset()
+      if (!offset) return location
+
+      const projected = map.current.project(location, zoom)
+      const adjusted = map.current.unproject([projected.x, projected.y - offset], zoom)
+
+      return [adjusted.lat, adjusted.lng] as [number, number]
+    },
+    [mobileUsableViewportOffset],
+  )
+
+  const flyToAdjustedLocation = useCallback(
+    (location: [number, number], zoom: number, duration: number) => {
+      map.current?.flyTo(adjustCenterForUsableViewport(location, zoom), zoom, { duration })
+    },
+    [adjustCenterForUsableViewport],
+  )
 
   const visibleMapMarkers = useMemo<MapMarker[]>(
     () =>
@@ -75,6 +106,20 @@ export function useLeafletMarkers({
   }, [])
 
   useEffect(() => {
+    if (!map.current || !compactMarkers) return
+
+    const frame = window.requestAnimationFrame(() => {
+      map.current?.setView(adjustCenterForUsableViewport(defaultCenter, 5), 5, {
+        animate: false,
+      })
+      setMapZoom(map.current?.getZoom() ?? 5)
+      setMapBounds(map.current?.getBounds() ?? null)
+    })
+
+    return () => window.cancelAnimationFrame(frame)
+  }, [adjustCenterForUsableViewport, compactMarkers])
+
+  useEffect(() => {
     if (!map.current) return
 
     const visibleIds = new Set(visibleMapMarkers.map((marker) => marker.id))
@@ -113,9 +158,7 @@ export function useLeafletMarkers({
 
       marker.on('click', () => {
         if (mapMarker.kind === 'cluster') {
-          map.current?.flyTo(mapMarker.coordinates, Math.min((map.current?.getZoom() ?? 5) + 2, 11), {
-            duration: 0.55,
-          })
+          flyToAdjustedLocation(mapMarker.coordinates, Math.min((map.current?.getZoom() ?? 5) + 2, 11), 0.55)
           return
         }
 
@@ -124,7 +167,7 @@ export function useLeafletMarkers({
       marker.addTo(map.current as LeafletMap)
       markers.current.set(mapMarker.id, marker)
     })
-  }, [nearestToiletId, onSelectToilet, selectedToilet?.id, visibleMapMarkers])
+  }, [flyToAdjustedLocation, nearestToiletId, onSelectToilet, selectedToilet?.id, visibleMapMarkers])
 
   useEffect(() => {
     if (!selectedToilet) return
@@ -138,17 +181,15 @@ export function useLeafletMarkers({
       return
     }
 
-    map.current.flyTo(selectedToilet.coordinates, Math.max(map.current.getZoom(), 12), {
-      duration: 0.7,
-    })
-  }, [nearestToiletId, selectedToilet])
+    flyToAdjustedLocation(selectedToilet.coordinates, Math.max(map.current.getZoom(), 12), 0.7)
+  }, [flyToAdjustedLocation, nearestToiletId, selectedToilet])
 
   function resetMap() {
-    map.current?.flyTo(defaultCenter, 5, { duration: 0.7 })
+    flyToAdjustedLocation(defaultCenter, 5, 0.7)
   }
 
   function flyToLocation(location: [number, number]) {
-    map.current?.flyTo(location, 12, { duration: 0.7 })
+    flyToAdjustedLocation(location, 12, 0.7)
   }
 
   return {
