@@ -73,7 +73,7 @@ export const AppRail = memo(function AppRail({
 }) {
   return (
     <nav className="app-rail" aria-label="Primary">
-      <div className="rail-brand" aria-label="GottaGo">
+      <div className="rail-brand" aria-label="Got2go.co">
         <LogoMark />
       </div>
       {navItems.map(([page, label, Icon]) => (
@@ -121,7 +121,7 @@ export function ControlPanel({
       <header className="panel-hero">
         <div>
           <p className="eyebrow">Aotearoa utility map</p>
-          <h1>GottaGo</h1>
+          <h1>Got2go.co</h1>
           <p className="hero-copy">Find a public toilet quickly, then get moving.</p>
         </div>
         <div className="brand-mark" aria-hidden="true">

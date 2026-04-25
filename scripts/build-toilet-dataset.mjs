@@ -1,6 +1,7 @@
 import { mkdir, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
+import { assertValidDataset, validateGeoJson, validateMetadata } from './dataset-contract.mjs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const rootDir = path.resolve(__dirname, '..')
@@ -417,16 +418,29 @@ export function buildDatasetFromOsm(osm, fetchedAt = new Date().toISOString()) {
     ],
   }
 
-  return { metadata, toilets }
+  const dataset = { metadata, toilets }
+  assertValidDataset(dataset, 'generated toilets.json')
+
+  return dataset
 }
 
 async function main() {
   const osm = await fetchOverpass()
   const { metadata, toilets } = buildDatasetFromOsm(osm)
+  const dataset = { metadata, toilets }
+  const geoJson = toGeoJson(toilets, metadata)
+  const outputErrors = [
+    ...validateMetadata(metadata, toilets),
+    ...validateGeoJson(geoJson, dataset),
+  ]
+
+  if (outputErrors.length) {
+    throw new Error(`Dataset output contract failed:\n${outputErrors.slice(0, 25).join('\n')}`)
+  }
 
   await mkdir(dataDir, { recursive: true })
-  await writeFile(path.join(dataDir, 'toilets.json'), `${JSON.stringify({ metadata, toilets }, null, 2)}\n`)
-  await writeFile(path.join(dataDir, 'toilets.geojson'), `${JSON.stringify(toGeoJson(toilets, metadata), null, 2)}\n`)
+  await writeFile(path.join(dataDir, 'toilets.json'), `${JSON.stringify(dataset, null, 2)}\n`)
+  await writeFile(path.join(dataDir, 'toilets.geojson'), `${JSON.stringify(geoJson, null, 2)}\n`)
   await writeFile(path.join(dataDir, 'toilets.csv'), toCsv(toilets))
   await writeFile(path.join(dataDir, 'metadata.json'), `${JSON.stringify(metadata, null, 2)}\n`)
 

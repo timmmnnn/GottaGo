@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { Toilet } from '../src/types'
-import { filterToilets, getVisibleMapMarkers } from '../src/utils/toilets'
+import { filterToilets, getVisibleMapMarkers, isRenderableNzCoordinate } from '../src/utils/toilets'
 
 function toilet(overrides: Partial<Toilet>): Toilet {
   return {
@@ -116,5 +116,25 @@ describe('filterToilets', () => {
       (one.coordinates[0] + two.coordinates[0]) / 2,
       (one.coordinates[1] + two.coordinates[1]) / 2,
     ])
+  })
+
+  it('keeps impossible coordinates out of rendered map markers while allowing Chatham Islands', () => {
+    const mainland = toilet({ id: 'mainland', coordinates: [-41.27, 173.28] })
+    const chatham = toilet({ id: 'chatham', coordinates: [-43.8, -176.5] })
+    const invalid = toilet({ id: 'invalid', coordinates: [173.28, -41.27] })
+
+    expect(isRenderableNzCoordinate(mainland.coordinates)).toBe(true)
+    expect(isRenderableNzCoordinate(chatham.coordinates)).toBe(true)
+    expect(isRenderableNzCoordinate(invalid.coordinates)).toBe(false)
+
+    const markers = getVisibleMapMarkers({
+      filteredToilets: [mainland, chatham, invalid],
+      mapBounds: null,
+      mapZoom: 12,
+      nearestToilet: null,
+      selectedToilet: null,
+    })
+
+    expect(markers.map((marker) => marker.id)).toEqual(['mainland', 'chatham'])
   })
 })

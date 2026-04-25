@@ -49,8 +49,8 @@ export function clusterIcon(count: number, active = false) {
   const size = count > 999 ? 66 : count > 99 ? 58 : count > 24 ? 50 : 44
   return L.divIcon({
     className: `toilet-cluster${active ? ' toilet-cluster-active' : ''}`,
-    html: `<span aria-hidden="true">${count.toLocaleString('en-NZ')}</span>`,
-    iconSize: [size, size],
-    iconAnchor: [size / 2, size / 2],
+    html: `<span class="cluster-bubble" aria-hidden="true"><span>${count.toLocaleString('en-NZ')}</span></span>`,
+    iconSize: [size, size + 12],
+    iconAnchor: [size / 2, size + 12],
   })
 }

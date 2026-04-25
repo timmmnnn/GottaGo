@@ -2,8 +2,8 @@ import type { LatLngBounds, LatLngExpression } from 'leaflet'
 import type { FacilityFlag, FilterKey, MapMarker, Toilet } from '../types'
 
 export const defaultCenter: LatLngExpression = [-41.55, 172.8]
-export const desktopMarkerRenderLimit = 650
-export const mobileMarkerRenderLimit = 360
+export const desktopMarkerRenderLimit = 50
+export const mobileMarkerRenderLimit = 50
 export const resultRenderLimit = 80
 export const mobileResultRenderLimit = 28
 
@@ -71,6 +71,17 @@ function coordinateDeltaScore(from: [number, number], to: [number, number]) {
   return dLat * dLat + dLng * dLng
 }
 
+export function isRenderableNzCoordinate(coordinates: [number, number]) {
+  const [lat, lng] = coordinates
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return false
+  if (lat < -48 || lat > -33) return false
+
+  const isMainlandNzLongitude = lng >= 165 && lng <= 180
+  const isChathamLongitude = lng >= -180 && lng <= -175
+
+  return isMainlandNzLongitude || isChathamLongitude
+}
+
 export function formatDate(date: string | undefined) {
   if (!date) return 'Unknown'
   return new Intl.DateTimeFormat('en-NZ', {
@@ -92,6 +103,7 @@ export function clusterStepForZoom(zoom: number) {
 }
 
 export function isWithinBounds(toilet: Toilet, bounds: LatLngBounds | null) {
+  if (!isRenderableNzCoordinate(toilet.coordinates)) return false
   if (!bounds) return true
   const [lat, lng] = toilet.coordinates
   return bounds.pad(0.15).contains([lat, lng])

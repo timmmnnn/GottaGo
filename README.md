@@ -1,6 +1,6 @@
-# GottaGo
+# Got2go.co
 
-GottaGo is a New Zealand public-toilet finder built with React, TypeScript, Vite, and Leaflet.
+Got2go.co is a New Zealand public-toilet finder built with React, TypeScript, Vite, and Leaflet.
 
 V1 ships with a generated consumer dataset of NZ public toilets in `public/data/`, built from OpenStreetMap `amenity=toilets` records. The app loads the dataset at runtime, displays the toilet locations on a map, and exposes practical details such as accessibility, baby-change status, opening hours, fee/access tags, operator, source link, and nearest-to-user sorting.
 
