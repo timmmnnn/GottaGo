@@ -45,6 +45,7 @@ npm run dev
 
 ```bash
 npm run data:toilets
+npm run test
 npm run lint
 npm run build
 ```

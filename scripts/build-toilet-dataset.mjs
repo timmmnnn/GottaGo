@@ -1,6 +1,6 @@
 import { mkdir, writeFile } from 'node:fs/promises'
 import path from 'node:path'
-import { fileURLToPath } from 'node:url'
+import { fileURLToPath, pathToFileURL } from 'node:url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const rootDir = path.resolve(__dirname, '..')
@@ -170,7 +170,7 @@ function mergeDuplicateGroup(records) {
   return merged
 }
 
-function dedupeRecords(records) {
+export function dedupeRecords(records) {
   const buckets = new Map()
 
   for (const record of records) {
@@ -256,7 +256,7 @@ function regionHint(tags) {
   return nzRegionHints.find((region) => haystack.includes(region.toLowerCase())) ?? null
 }
 
-function normalizeElement(element) {
+export function normalizeElement(element) {
   const tags = element.tags ?? {}
   const latitude = element.lat ?? element.center?.lat
   const longitude = element.lon ?? element.center?.lon
@@ -391,9 +391,7 @@ async function fetchOverpass() {
   return response.json()
 }
 
-async function main() {
-  const fetchedAt = new Date().toISOString()
-  const osm = await fetchOverpass()
+export function buildDatasetFromOsm(osm, fetchedAt = new Date().toISOString()) {
   const normalizedToilets = (osm.elements ?? [])
     .map(normalizeElement)
     .filter(Boolean)
@@ -419,6 +417,13 @@ async function main() {
     ],
   }
 
+  return { metadata, toilets }
+}
+
+async function main() {
+  const osm = await fetchOverpass()
+  const { metadata, toilets } = buildDatasetFromOsm(osm)
+
   await mkdir(dataDir, { recursive: true })
   await writeFile(path.join(dataDir, 'toilets.json'), `${JSON.stringify({ metadata, toilets }, null, 2)}\n`)
   await writeFile(path.join(dataDir, 'toilets.geojson'), `${JSON.stringify(toGeoJson(toilets, metadata), null, 2)}\n`)
@@ -428,7 +433,9 @@ async function main() {
   console.log(`Generated ${toilets.length} public toilet records in ${dataDir}`)
 }
 
-main().catch((error) => {
-  console.error(error)
-  process.exitCode = 1
-})
+if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+  main().catch((error) => {
+    console.error(error)
+    process.exitCode = 1
+  })
+}
