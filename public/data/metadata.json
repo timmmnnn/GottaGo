@@ -1,0 +1,17 @@
+{
+  "version": "1.0.0",
+  "generatedAt": "2026-04-25T09:38:50.070Z",
+  "country": "NZ",
+  "recordCount": 4285,
+  "rawRecordCount": 4507,
+  "duplicateGroups": 192,
+  "duplicateRecordsRemoved": 222,
+  "primarySource": "OpenStreetMap amenity=toilets",
+  "primarySourceUrl": "https://www.openstreetmap.org",
+  "query": "\n[out:json][timeout:180];\narea[\"ISO3166-1\"=\"NZ\"][admin_level=2]->.nz;\n(\n  node[\"amenity\"=\"toilets\"](area.nz);\n  way[\"amenity\"=\"toilets\"](area.nz);\n  relation[\"amenity\"=\"toilets\"](area.nz);\n);\nout center tags;\n",
+  "notes": [
+    "V1 includes public toilet features tagged amenity=toilets in OpenStreetMap within New Zealand.",
+    "Accessibility and facility attributes are normalized from source tags and may be null when unverified.",
+    "Restricted access records tagged access=private or access=no are excluded."
+  ]
+}
