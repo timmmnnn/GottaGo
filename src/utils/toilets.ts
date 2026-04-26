@@ -2,8 +2,8 @@ import type { LatLngBounds } from 'leaflet'
 import type { FacilityFlag, FilterKey, MapMarker, Toilet } from '../types'
 
 export const defaultCenter: [number, number] = [-41.55, 172.8]
-export const desktopMarkerRenderLimit = 50
-export const mobileMarkerRenderLimit = 50
+export const desktopMarkerRenderLimit = 20
+export const mobileMarkerRenderLimit = 20
 export const resultRenderLimit = 80
 export const mobileResultRenderLimit = 28
 

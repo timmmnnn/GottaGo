@@ -1,11 +1,95 @@
 <!doctype html>
-<html lang="en">
+<html lang="en-NZ">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#0d5548" />
-    <title>Got2go.co</title>
+    <meta
+      name="description"
+      content="Find public toilets across New Zealand with Got2go.co. Search a nationwide map for nearby facilities, accessibility, baby-change, fees, hours, and source details."
+    />
+    <meta
+      name="keywords"
+      content="New Zealand public toilets, toilet finder NZ, accessible toilets, baby change facilities, public bathroom map, Got2go"
+    />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta name="application-name" content="Got2go.co" />
+    <meta name="apple-mobile-web-app-title" content="Got2go.co" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="geo.region" content="NZ" />
+    <link rel="canonical" href="https://got2go.co/" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Got2go.co" />
+    <meta property="og:title" content="Got2go.co | New Zealand Public Toilet Finder" />
+    <meta
+      property="og:description"
+      content="A nationwide map for finding public toilets in New Zealand, including accessibility, baby-change, fee, opening-hours, and source information where available."
+    />
+    <meta property="og:url" content="https://got2go.co/" />
+    <meta property="og:image" content="https://got2go.co/images/facility-preview.png" />
+    <meta property="og:image:alt" content="Got2go.co public toilet finder map preview" />
+    <meta property="og:locale" content="en_NZ" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Got2go.co | New Zealand Public Toilet Finder" />
+    <meta
+      name="twitter:description"
+      content="Find nearby public toilets across New Zealand with practical facility details and map search."
+    />
+    <meta name="twitter:image" content="https://got2go.co/images/facility-preview.png" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebApplication",
+            "@id": "https://got2go.co/#app",
+            "name": "Got2go.co",
+            "url": "https://got2go.co/",
+            "applicationCategory": "TravelApplication",
+            "operatingSystem": "Any",
+            "description": "Got2go.co helps people find public toilets across New Zealand with a searchable map and practical facility details.",
+            "areaServed": {
+              "@type": "Country",
+              "name": "New Zealand"
+            },
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "NZD"
+            }
+          },
+          {
+            "@type": "Dataset",
+            "@id": "https://got2go.co/data/toilets.json#dataset",
+            "name": "New Zealand public toilet locations",
+            "url": "https://got2go.co/data/toilets.json",
+            "description": "A consumer-ready dataset of public toilet locations and facility attributes across New Zealand, derived from OpenStreetMap amenity=toilets records.",
+            "spatialCoverage": {
+              "@type": "Place",
+              "name": "New Zealand"
+            },
+            "license": "https://www.openstreetmap.org/copyright",
+            "isBasedOn": "https://www.openstreetmap.org"
+          }
+        ]
+      }
+    </script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0ZLD17V1VG"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-0ZLD17V1VG');
+    </script>
+
+    <title>Got2go.co | New Zealand Public Toilet Finder</title>
   </head>
   <body>
     <div id="root"></div>
