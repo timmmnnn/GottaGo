@@ -41,6 +41,20 @@ npm install
 npm run dev
 ```
 
+## Community Ratings
+
+The toilet detail card supports anonymous 1-5 star ratings and optional comments via Supabase.
+Comments and ratings are inserted as `pending`; only `approved` rows are visible publicly.
+
+1. Create a Supabase project.
+2. Run `supabase/migrations/001_toilet_feedback.sql` in the Supabase SQL editor.
+3. Copy `.env.example` to `.env.local`.
+4. Set `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`.
+5. Restart `npm run dev`.
+
+Admin moderation can happen in the Supabase table editor by changing `status` from `pending` to
+`approved` or `rejected`.
+
 ## Verification
 
 ```bash

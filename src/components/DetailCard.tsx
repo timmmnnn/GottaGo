@@ -1,6 +1,11 @@
 import { ChevronDown, Route, Sparkles } from 'lucide-react'
+import { lazy, Suspense } from 'react'
 import type { Toilet } from '../types'
 import { formatFlag } from '../utils/toilets'
+
+const ToiletFeedback = lazy(() =>
+  import('./ToiletFeedback').then((module) => ({ default: module.ToiletFeedback })),
+)
 
 type DetailCardProps = {
   onCollapse: () => void
@@ -100,6 +105,10 @@ export function DetailCard({
           </a>
           <span>{selectedToilet.operator ?? selectedToilet.sourceId}</span>
         </div>
+
+        <Suspense fallback={<div className="feedback-panel feedback-panel-loading">Loading community feedback</div>}>
+          <ToiletFeedback toiletId={selectedToilet.id} />
+        </Suspense>
       </div>
     </article>
   )

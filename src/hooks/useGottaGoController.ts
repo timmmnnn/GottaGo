@@ -22,7 +22,6 @@ export function useGottaGoController() {
     displayedToilets,
     filteredToilets,
     locationMessage,
-    nearestToiletId,
     nearestToilet,
     pickNearest,
     query,
@@ -39,7 +38,6 @@ export function useGottaGoController() {
   const map = useLeafletMarkers({
     compactMarkers: isMobile,
     filteredToilets,
-    nearestToiletId,
     nearestToilet,
     selectedToilet,
     onSelectToilet: setSelectedId,

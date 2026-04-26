@@ -1,19 +1,17 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import L, { type Map as LeafletMap, type Marker } from 'leaflet'
 import type { MapMarker, Toilet } from '../types'
-import { activeMarkerIcon, clusterIcon, markerIcon, rareNearestMarkerIcon } from '../mapIcons'
+import { activeMarkerIcon, clusterIcon, markerIcon } from '../mapIcons'
 import { defaultCenter, desktopMarkerRenderLimit, getVisibleMapMarkers, mobileMarkerRenderLimit } from '../utils/toilets'
 
 export function useLeafletMarkers({
   filteredToilets,
-  nearestToiletId,
   nearestToilet,
   selectedToilet,
   compactMarkers = false,
   onSelectToilet,
 }: {
   filteredToilets: Toilet[]
-  nearestToiletId: string | null
   nearestToilet: Toilet | null
   selectedToilet: Toilet | null
   compactMarkers?: boolean
@@ -136,8 +134,6 @@ export function useLeafletMarkers({
       const icon =
         mapMarker.kind === 'cluster'
           ? clusterIcon(mapMarker.count, mapMarker.hasSelected)
-          : mapMarker.toilet.id === nearestToiletId
-            ? rareNearestMarkerIcon
           : mapMarker.toilet.id === selectedToilet?.id
             ? activeMarkerIcon
             : markerIcon
@@ -167,7 +163,7 @@ export function useLeafletMarkers({
       marker.addTo(map.current as LeafletMap)
       markers.current.set(mapMarker.id, marker)
     })
-  }, [flyToAdjustedLocation, nearestToiletId, onSelectToilet, selectedToilet?.id, visibleMapMarkers])
+  }, [flyToAdjustedLocation, onSelectToilet, selectedToilet?.id, visibleMapMarkers])
 
   useEffect(() => {
     if (!selectedToilet) return
@@ -175,14 +171,14 @@ export function useLeafletMarkers({
     const marker = markers.current.get(selectedToilet.id)
     if (!map.current || !marker) return
 
-    marker.setIcon(selectedToilet.id === nearestToiletId ? rareNearestMarkerIcon : activeMarkerIcon)
+    marker.setIcon(activeMarkerIcon)
     if (!hasSyncedInitialSelection.current) {
       hasSyncedInitialSelection.current = true
       return
     }
 
     flyToAdjustedLocation(selectedToilet.coordinates, Math.max(map.current.getZoom(), 12), 0.7)
-  }, [flyToAdjustedLocation, nearestToiletId, selectedToilet])
+  }, [flyToAdjustedLocation, selectedToilet])
 
   function resetMap() {
     flyToAdjustedLocation(defaultCenter, 5, 0.7)
