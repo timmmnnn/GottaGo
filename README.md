@@ -49,8 +49,12 @@ Comments and ratings are inserted as `pending`; only `approved` rows are visible
 1. Create a Supabase project.
 2. Run `supabase/migrations/001_toilet_feedback.sql` in the Supabase SQL editor.
 3. Copy `.env.example` to `.env.local`.
-4. Set `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`.
+4. Set `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY`.
 5. Restart `npm run dev`.
+
+For production hosting, add those same `VITE_` variables in the host's environment settings and
+trigger a fresh build/deploy. Vite embeds public env variables at build time, so changing them after
+deploy will not affect an already-built bundle.
 
 Admin moderation can happen in the Supabase table editor by changing `status` from `pending` to
 `approved` or `rejected`.

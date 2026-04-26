@@ -35,9 +35,10 @@ type SupabaseCommentRow = {
 }
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined
+const supabasePublishableKey = (import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
+  import.meta.env.VITE_SUPABASE_ANON_KEY) as string | undefined
 
-export const isFeedbackConfigured = Boolean(supabaseUrl && supabaseAnonKey)
+export const isFeedbackConfigured = Boolean(supabaseUrl && supabasePublishableKey)
 
 const feedbackCache = new Map<string, Promise<ToiletFeedbackData>>()
 
@@ -56,10 +57,10 @@ function endpoint(path: string) {
 }
 
 function headers() {
-  if (!supabaseAnonKey) throw new Error('Supabase anon key is not configured.')
+  if (!supabasePublishableKey) throw new Error('Supabase publishable key is not configured.')
   return {
-    apikey: supabaseAnonKey,
-    Authorization: `Bearer ${supabaseAnonKey}`,
+    apikey: supabasePublishableKey,
+    Authorization: `Bearer ${supabasePublishableKey}`,
     'Content-Type': 'application/json',
   }
 }
